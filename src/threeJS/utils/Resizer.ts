@@ -2,44 +2,41 @@ import EventEmitter from "./EventEmitter"
 
 class Resizer extends EventEmitter {
 
-    boundary: HTMLDivElement
+    placeholder: HTMLDivElement
     width: number
     height: number
     pixelRatio: number
     resizeObserver: ResizeObserver
     
     constructor(canvas: HTMLCanvasElement) {
+        
+        super()
 
         if (!(canvas.parentNode instanceof HTMLDivElement)) throw new Error('Le parent du canvas doit être un élément de type "div".')
 
-        super()
-        this.boundary = canvas.parentNode
-        this.width = this.getWidth()
-        this.height = this.getHeight()
+        this.placeholder = canvas.parentNode
+        this.width = this.placeholder.clientWidth
+        this.height = this.placeholder.clientHeight
         this.pixelRatio = Math.min(window.devicePixelRatio, 2)
 
         this.resizeObserver = new ResizeObserver( () => {
             this.updateDimensions()
             this.notify("resize")
         })
-        this.resizeObserver.observe(this.boundary)
+        this.resizeObserver.observe(this.placeholder)
     }
 
-    getWidth() {
-        if (this.boundary instanceof HTMLDivElement) return this.boundary.clientWidth
-
-        return window.innerWidth
+    getHeight() :number {
+        return this.height
     }
 
-    getHeight() {
-        if (this.boundary instanceof HTMLDivElement) return this.boundary.clientHeight
-
-        return window.innerHeight
+    getWidth() :number {
+        return this.width
     }
 
     updateDimensions() {
-        this.width = this.getWidth()
-        this.height = this.getHeight()
+        this.width = this.placeholder.clientWidth
+        this.height = this.placeholder.clientHeight
     }
 }
 

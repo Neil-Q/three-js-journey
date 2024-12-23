@@ -5,6 +5,7 @@ class Clock extends EventEmitter {
     start: number
     current: number
     elapsed: number
+    defaultDelta: number
     delta: number
 
     constructor() {
@@ -13,6 +14,7 @@ class Clock extends EventEmitter {
         this.start = Date.now()
         this.current = this.start
         this.elapsed = 0
+        this.defaultDelta = 16
         this.delta = 16
 
         this.tick()
@@ -25,7 +27,9 @@ class Clock extends EventEmitter {
             this.current = currentTime
             this.elapsed = this.current - this.start
 
-            this.notify("tick")
+            const speedRatio = this.delta/this.defaultDelta
+
+            this.notify("tick", speedRatio)
             this.tick()
         })
     }

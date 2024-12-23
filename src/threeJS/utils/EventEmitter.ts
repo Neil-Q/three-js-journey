@@ -11,9 +11,9 @@ class EventEmitter {
         this.observers = []
     }
 
-    notify(event: string) {
+    notify(event: string,  argument?: any) {
         this.observers.forEach((observer: Observer) => {
-            if (observer.event === event) observer.callback()
+            if (observer.event === event) observer.callback(argument)
         })
     }
 
