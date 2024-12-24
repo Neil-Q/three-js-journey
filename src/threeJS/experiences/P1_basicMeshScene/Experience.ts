@@ -3,6 +3,7 @@ import Resizer from "@/threeJS/utils/Resizer"
 import Clock from "@/threeJS/utils/Clock"
 import Camera from "./Camera"
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import World from "./World/World"
 
 class Experience {
 
@@ -13,6 +14,7 @@ class Experience {
     resizer: Resizer
     scene: THREE.Scene
     renderer: THREE.Renderer
+    world: World
 
     private constructor(canvas: HTMLCanvasElement) {
 
@@ -27,8 +29,9 @@ class Experience {
         this.camera = this.setCamera()
         this.renderer = this.setRenderer()
 
-
         this.controls = new OrbitControls(this.camera.getInstance(), this.canvas)
+
+        this.world = new World(this)
     }
 
     setCamera() :Camera {
@@ -48,7 +51,7 @@ class Experience {
         })
 
         renderer.setSize(this.resizer.getWidth(), this.resizer.getHeight())
-        renderer.setPixelRatio(2)
+        renderer.setPixelRatio(1)
 
         this.clock.on("tick", () => {
             renderer.render(this.scene, this.camera.getInstance())
