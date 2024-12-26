@@ -1,4 +1,6 @@
 import * as Three from "three"
+import * as Lil from "node_modules/lil-gui/dist/lil-gui.esm"
+import GUI from "lil-gui"
 import Resizer from "@/threeJS/utils/Resizer"
 import Clock from "@/threeJS/utils/Clock"
 import Camera from "./Camera"
@@ -9,6 +11,7 @@ class Experience {
 
     camera: Camera
     canvas: HTMLCanvasElement
+    gui: Lil.GUI
     clock: Clock
     controls: OrbitControls
     resizer: Resizer
@@ -16,11 +19,12 @@ class Experience {
     renderer: THREE.Renderer
     world: World
 
-    private constructor(canvas: HTMLCanvasElement) {
+    private constructor(canvas?: HTMLCanvasElement) {
 
         if (!(canvas instanceof HTMLCanvasElement)) throw new Error('La cible de l\'experience doit être un élément de type canvas')
 
         this.canvas = canvas
+        this.gui = new GUI()
         this.resizer = new Resizer(this.canvas)
         this.clock = new Clock
         // this.clock.on("tick", this.update.bind(this))
@@ -29,13 +33,15 @@ class Experience {
         this.camera = this.setCamera()
         this.renderer = this.setRenderer()
 
-        this.controls = new OrbitControls(this.camera.getInstance(), this.canvas)
+        this.controls = this.setControls()
 
         this.world = new World(this)
     }
 
     setCamera() :Camera {
+
         const camera = new Camera({
+            gui: this.gui,
             resizer: this.resizer,
             scene: this.scene
         })
@@ -45,7 +51,19 @@ class Experience {
         return camera
     }
 
+    setControls() :OrbitControls {
+        
+        const controls = new OrbitControls(this.camera.getInstance(), this.canvas)
+
+        this.camera.on("cameraChange", () => {
+            controls.object = this.camera.getInstance()
+        })
+
+        return controls
+    }
+
     setRenderer() :THREE.Renderer {
+
         const renderer = new Three.WebGLRenderer({
             canvas: this.canvas
         })
